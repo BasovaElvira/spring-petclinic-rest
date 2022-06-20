@@ -25,28 +25,39 @@ public class OwnerTest {
 	}
 
 	@Test
-	@DisplayName("Create Location")
-	public void shouldCreateOwner() throws SQLException {
-
-		int postalCode = new Random().nextInt(999999);
-
-		PreparedStatement sql = connection
-				.prepareStatement(String.format("SELECT*FROM location WHERE='" + postalCode + "'"));
-		/*
-		 * { "address": "string", "city": "string", "firstName": "string", "id": 0,
-		 * "lastName": "string", "pets": [ { "birthDate": "2022-06-20", "id": 0, "name":
-		 * "string", "visits": [ { "date": "2022-06-20", "description": "string", "id": 0
-		 * } ] } ], "telephone": "string" }
-		 */
+	@DisplayName("Create owner with pet")
+	public void shouldCreateOwnerWithPet() throws SQLException {
 
 		given().contentType("application/json")
-				.body("{\n" + "  \"address\": \"" + "Ленина" + "\",\n" + "  \"city\": \"Кострома\",\n"
-						+ "  \"firstName\": \"Елена\",\n" + "  \"lastName\": \"Васина\",\n" + "}")
-				.when().post("/api/locations").then().statusCode(201).body("id", not(empty()));
+				.body("{\n" +
+					"  \"firstName\": \"Mila\",\n" +
+					"  \"lastName\": \"Franklin\",\n" +
+					"  \"address\": \"105 W. Liberty St.\",\n" +
+					"  \"city\": \"Madison\",\n" +
+					"  \"telephone\": \"6085551022\",\n" +
+					"  \"pets\": [\n" +
+					"    {\n" +
+					"      \"name\": \"Pit\",\n" +
+					"      \"birthDate\": \"2015-09-07\",\n" +
+					"      \"visits\": []\n" +
+					"    }\n" +
+					"  ]\n" +
+					"}")
+				.when().post("/owners").then().statusCode(201).body("id", not(empty()));
 
+		PreparedStatement sql = connection
+			.prepareStatement(String.format("SELECT*FROM owners WHERE firstName='Mila'"));
 		ResultSet keys = sql.getGeneratedKeys();
+		int ownerId = keys.getInt(1);
 		assertThat(keys.next(), is(true));
-		assertThat(keys.getString(2), is("Елена"));
+		assertThat(keys.getString(3), is("Franklin"));
+		PreparedStatement sqlOwnerId = connection
+			.prepareStatement(String.format("SELECT*FROM pets WHERE ownerId='" + ownerId + "'"));
+		ResultSet keyForOwner = sqlOwnerId.getGeneratedKeys();
+		assertThat(keyForOwner.next(), is(true));
+		assertThat(keyForOwner.getString(2), is("Pit"));
+
 	}
+
 
 }

@@ -32,7 +32,7 @@ public class VetsTests {
 		ResultSet resultSet = statement.executeQuery("SELECT id FROM vets WHERE id=(SELECT max(id) FROM vets);");
 		idString=resultSet.getString("id");
 		PreparedStatement preparedStatement = connection.prepareStatement(
-			"INSERT INTO vets (id, firstname,lastname) VALUES("+vetFirstName+","+vetLastName+")"
+			"INSERT INTO vets (id, first_name,last_name) VALUES("+vetFirstName+","+vetLastName+")"
 		);
 	}
 
@@ -46,6 +46,7 @@ public class VetsTests {
 			.all()
 			.extract().response();
 
+		int i =6;
 		assert true;
 	}
 

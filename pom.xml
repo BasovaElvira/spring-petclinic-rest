@@ -75,6 +75,12 @@
       <artifactId>rest-assured</artifactId>
       <version>5.1.0</version>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-xml</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <!-- caching -->
